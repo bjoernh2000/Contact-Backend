@@ -1,5 +1,6 @@
 from uuid import uuid4
 from Authentication.password import encrypt, is_password
+from Models.Session import Session
 
 
 def authenticate(email, password):
@@ -7,7 +8,9 @@ def authenticate(email, password):
     user = mongo.db.users.find_one({"email": email}, {"_id": 0})
     if user:
         if is_password(password, user["password"]):
-            return True, "Session"
+            sessionID = uuid4()
+            session = Session(userID=user["uid"], sessionID=sessionID)
+            return True, session
     return False, "Invalid credentials, please try again."
 
 

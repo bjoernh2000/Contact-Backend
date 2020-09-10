@@ -1,4 +1,4 @@
-from flask import Flask, Response, jsonify, request
+from flask import Flask, Response, jsonify, request, make_response
 from flask_pymongo import PyMongo
 from Authentication.password import encrypt, is_password
 from Authentication import services
@@ -24,11 +24,20 @@ def signup():
 def login():
     error = None
     form = request.form
-    [auth, msg] = services.authenticate(form["email"], form["password"])
+    [auth, session] = services.authenticate(form["email"], form["password"])
     if auth:
-        return "Logged in"  # need to add actual session and so on
+        ret = make_response("Success")
+        ret.set_cookie("SID", str(session.sessionID),
+                       expires=session.dateExpires)
+        return ret
     else:
-        return msg
+        ret = session
+        return ret
+
+
+@app.route('/logout', methods=["POIST"])
+def logout():
+    return "WIP"
 
 
 if __name__ == "__main__":
