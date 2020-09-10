@@ -22,7 +22,7 @@ def signUpAuth(email, password, username, name):
                 "username": username,
                 "password": encrypt(password),
                 "name": name,
-                "id": uuid4()
+                "uid": uuid4()
             }
             mongo.db.users.insert_one(document)
             return True, "It worked"
